@@ -20,7 +20,8 @@
 #define HARDWARE_TYPE MD_MAX72XX::FC16_HW
 #define MAX_DEVICES   4   // Total number of LED modules connected in parallel.
 #define CS_PIN        5   // GPIO5	CS
-#define DM_INTENSITY  2   // Dot-Matrix LED Intensity Range: 0-15
+// #define DM_INTENSITY  0   // Dot-Matrix LED Intensity Range: 0-15
+int DM_INTENSITY = 0;
 
 MD_Parola Display = MD_Parola(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
 
@@ -111,6 +112,15 @@ void printLocalTime(){
   } else {
     PRINTS("Local time obtained successfully");
     PRINTS(&timeinfo, "%A, %B %d %Y %H:%M:%S");
+    
+    // Change DM_INTENSITY as per hour of day.
+    if(timeinfo.tm_hour >= 6 && timeinfo.tm_hour <= 17) {
+      DM_INTENSITY = 5;
+    } else {
+      DM_INTENSITY = 0;
+    }
+    Display.setIntensity(DM_INTENSITY);
+    
     strftime(newMessage, BUF_SIZE, "%H:%M", &timeinfo);
     strcpy(curMessage, newMessage);
   }
